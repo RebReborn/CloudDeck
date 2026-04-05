@@ -1,0 +1,5 @@
+{
+  "name": "CloudDeck",
+  "description": "A modern, secure, and fast Cloudinary media dashboard with no login required.",
+  "requestFramePermissions": []
+}
