@@ -28,6 +28,7 @@ interface CloudDeckState {
   folders: string[];
   currentFolder: string;
   viewMode: 'grid' | 'list';
+  uiStyle: 'regular' | 'glass';
   isLoading: boolean;
   searchQuery: string;
   resourceType: 'image' | 'video' | 'raw';
@@ -38,6 +39,7 @@ interface CloudDeckState {
   setFolders: (folders: string[]) => void;
   setCurrentFolder: (folder: string) => void;
   setViewMode: (mode: 'grid' | 'list') => void;
+  setUiStyle: (style: 'regular' | 'glass') => void;
   setIsLoading: (loading: boolean) => void;
   setSearchQuery: (query: string) => void;
   setResourceType: (type: 'image' | 'video' | 'raw') => void;
@@ -53,6 +55,7 @@ export const useCloudDeckStore = create<CloudDeckState>()(
       folders: [],
       currentFolder: '',
       viewMode: 'grid',
+      uiStyle: 'regular',
       isLoading: false,
       searchQuery: '',
       resourceType: 'image',
@@ -63,6 +66,7 @@ export const useCloudDeckStore = create<CloudDeckState>()(
       setFolders: (folders) => set({ folders }),
       setCurrentFolder: (currentFolder) => set({ currentFolder }),
       setViewMode: (viewMode) => set({ viewMode }),
+      setUiStyle: (uiStyle) => set({ uiStyle }),
       setIsLoading: (isLoading) => set({ isLoading }),
       setSearchQuery: (searchQuery) => set({ searchQuery }),
       setResourceType: (resourceType) => set({ resourceType }),

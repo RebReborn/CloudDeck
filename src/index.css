@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+@layer base {
+  * {
+    @apply transition-colors duration-300;
+  }
+}
+
+.backdrop-blur-xl {
+  backdrop-filter: blur(24px);
+}
+
+.backdrop-blur-2xl {
+  backdrop-filter: blur(40px);
+}

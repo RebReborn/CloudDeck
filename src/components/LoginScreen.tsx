@@ -5,6 +5,7 @@ import { Cloud, Key, Lock, Loader2, ShieldCheck, X, ExternalLink } from 'lucide-
 import { motion, AnimatePresence } from 'motion/react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { cn } from '../lib/utils';
 
 export default function LoginScreen() {
   const [cloudName, setCloudName] = useState('');
@@ -12,7 +13,7 @@ export default function LoginScreen() {
   const [apiSecret, setApiSecret] = useState('');
   const [loading, setLoading] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
-  const setCredentials = useCloudDeckStore((state) => state.setCredentials);
+  const { setCredentials, uiStyle } = useCloudDeckStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,11 +41,22 @@ export default function LoginScreen() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 p-4 transition-colors duration-500">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 p-4 transition-colors duration-500 relative overflow-hidden">
+      {/* Background elements for glass effect */}
+      {uiStyle === 'glass' && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-500/10 blur-[120px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-purple-500/10 blur-[120px]" />
+        </div>
+      )}
+
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-slate-800 p-8 md:p-10"
+        className={cn(
+          "w-full max-w-md rounded-3xl shadow-2xl p-8 md:p-10 border relative z-10 transition-all",
+          uiStyle === 'glass' ? "backdrop-blur-2xl bg-white/60 dark:bg-slate-900/60 border-white/20 dark:border-slate-800/50" : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-slate-200/50 dark:shadow-none"
+        )}
       >
         <div className="flex flex-col items-center mb-10">
           <motion.div 

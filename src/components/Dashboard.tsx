@@ -24,7 +24,9 @@ import {
   Loader2,
   X,
   Sun,
-  Moon
+  Moon,
+  Sparkles,
+  Layout
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { formatBytes, cn } from '../lib/utils';
@@ -39,6 +41,7 @@ export default function Dashboard() {
     folders, setFolders, 
     currentFolder, setCurrentFolder,
     viewMode, setViewMode,
+    uiStyle, setUiStyle,
     searchQuery, setSearchQuery,
     resourceType, setResourceType,
     usage, setUsage,
@@ -58,6 +61,10 @@ export default function Dashboard() {
       document.documentElement.classList.remove('dark');
     }
   }, [isDarkMode]);
+
+  const glassClasses = uiStyle === 'glass' ? "backdrop-blur-xl bg-white/60 dark:bg-slate-900/60 border-white/20 dark:border-slate-800/50 shadow-2xl" : "";
+  const sidebarGlass = uiStyle === 'glass' ? "backdrop-blur-2xl bg-white/40 dark:bg-slate-900/40 border-white/10 dark:border-slate-800/30" : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800";
+  const cardGlass = uiStyle === 'glass' ? "backdrop-blur-md bg-white/30 dark:bg-slate-900/30 border-white/20 dark:border-slate-800/40" : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800";
 
   const fetchAssets = async () => {
     setIsLoading(true);
@@ -161,9 +168,18 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-slate-950 overflow-hidden transition-colors duration-500">
+    <div className="flex h-screen bg-slate-50 dark:bg-slate-950 overflow-hidden transition-colors duration-500 relative">
+      {/* Background elements for glass effect */}
+      {uiStyle === 'glass' && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-500/10 blur-[120px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-500/10 blur-[120px]" />
+          <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] rounded-full bg-emerald-500/5 blur-[100px]" />
+        </div>
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col shadow-sm">
+      <aside className={cn("w-64 border-r flex flex-col shadow-sm transition-all z-20", sidebarGlass)}>
         <div className="p-6 flex items-center gap-3">
           <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
             <Cloud className="text-white w-5 h-5" />
@@ -232,6 +248,13 @@ export default function Dashboard() {
 
         <div className="p-4 border-t border-slate-100 dark:border-slate-800 space-y-1">
           <button 
+            onClick={() => setUiStyle(uiStyle === 'glass' ? 'regular' : 'glass')}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+          >
+            {uiStyle === 'glass' ? <Layout className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
+            {uiStyle === 'glass' ? 'Regular Look' : 'Glass Look'}
+          </button>
+          <button 
             onClick={() => setIsDarkMode(!isDarkMode)}
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
           >
@@ -248,9 +271,9 @@ export default function Dashboard() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 flex flex-col overflow-hidden relative z-10">
         {/* Navbar */}
-        <header className="h-16 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between px-6 shrink-0 shadow-sm z-10">
+        <header className={cn("h-16 border-b flex items-center justify-between px-6 shrink-0 shadow-sm z-10 transition-all", glassClasses)}>
           <div className="flex items-center gap-4 flex-1 max-w-xl">
             <div className="relative w-full group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
@@ -259,13 +282,13 @@ export default function Dashboard() {
                 placeholder="Search assets by name..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all dark:text-white placeholder:text-slate-400"
+                className="w-full pl-12 pr-4 py-2.5 bg-slate-50/50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all dark:text-white placeholder:text-slate-400"
               />
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+            <div className="flex bg-slate-100/50 dark:bg-slate-800/50 p-1 rounded-xl">
               <button 
                 onClick={() => setViewMode('grid')}
                 className={cn("p-2 rounded-lg transition-all", viewMode === 'grid' ? "bg-white dark:bg-slate-700 shadow-sm text-blue-600 dark:text-blue-400" : "text-slate-500")}
@@ -290,7 +313,7 @@ export default function Dashboard() {
 
         {/* Analytics Bar */}
         <div className="px-6 py-6 grid grid-cols-1 md:grid-cols-3 gap-6 shrink-0">
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center gap-5 shadow-sm">
+          <div className={cn("p-5 rounded-2xl border flex items-center gap-5 shadow-sm transition-all", cardGlass)}>
             <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-inner">
               <HardDrive className="w-6 h-6" />
             </div>
@@ -299,7 +322,7 @@ export default function Dashboard() {
               <p className="text-xl font-black dark:text-white tracking-tight">{usage ? formatBytes(usage.storage.usage) : '...'}</p>
             </div>
           </div>
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center gap-5 shadow-sm">
+          <div className={cn("p-5 rounded-2xl border flex items-center gap-5 shadow-sm transition-all", cardGlass)}>
             <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-inner">
               <Activity className="w-6 h-6" />
             </div>
@@ -308,7 +331,7 @@ export default function Dashboard() {
               <p className="text-xl font-black dark:text-white tracking-tight">{usage ? formatBytes(usage.bandwidth.usage) : '...'}</p>
             </div>
           </div>
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center gap-5 shadow-sm">
+          <div className={cn("p-5 rounded-2xl border flex items-center gap-5 shadow-sm transition-all", cardGlass)}>
             <div className="w-12 h-12 bg-violet-50 dark:bg-violet-900/20 rounded-2xl flex items-center justify-center text-violet-600 dark:text-violet-400 shadow-inner">
               <Database className="w-6 h-6" />
             </div>
@@ -357,9 +380,9 @@ export default function Dashboard() {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   key={asset.public_id} 
-                  className="group relative bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-xl transition-all"
+                  className={cn("group relative rounded-xl border overflow-hidden hover:shadow-xl transition-all", cardGlass)}
                 >
-                  <div className="aspect-square bg-slate-100 dark:bg-slate-800 relative overflow-hidden">
+                  <div className="aspect-square bg-slate-100/50 dark:bg-slate-800/30 relative overflow-hidden">
                     {asset.resource_type === 'image' ? (
                       <img 
                         src={asset.secure_url.replace('/upload/', '/upload/w_300,c_fill,g_auto/')} 
@@ -402,7 +425,7 @@ export default function Dashboard() {
               ))}
             </div>
           ) : (
-            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+            <div className={cn("rounded-xl border overflow-hidden transition-all", cardGlass)}>
               <table className="w-full text-left">
                 <thead className="bg-slate-50 dark:bg-slate-800/50 text-xs font-semibold text-slate-500 uppercase">
                   <tr>
@@ -462,7 +485,7 @@ export default function Dashboard() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-sm bg-white dark:bg-slate-900 rounded-3xl shadow-2xl p-8 text-center"
+              className={cn("relative w-full max-w-sm rounded-3xl shadow-2xl p-8 text-center border", uiStyle === 'glass' ? "backdrop-blur-2xl bg-white/60 dark:bg-slate-900/60 border-white/20 dark:border-slate-800/50" : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800")}
             >
               <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-2xl flex items-center justify-center text-red-600 dark:text-red-400 mx-auto mb-6">
                 <Trash2 className="w-8 h-8" />
@@ -505,9 +528,9 @@ export default function Dashboard() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl shadow-2xl overflow-hidden"
+              className={cn("relative w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border", uiStyle === 'glass' ? "backdrop-blur-2xl bg-white/60 dark:bg-slate-900/60 border-white/20 dark:border-slate-800/50" : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800")}
             >
-              <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                 <h3 className="text-lg font-bold dark:text-white">Upload Media</h3>
                 <button onClick={() => setIsUploadModalOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
                   <X className="w-5 h-5" />
