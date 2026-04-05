@@ -1,15 +1,95 @@
 @import "tailwindcss";
 
+@theme {
+  --color-background: oklch(0.12 0.02 240);
+  --color-foreground: oklch(0.98 0 0);
+  --color-primary: oklch(0.65 0.18 250);
+  --color-secondary: oklch(0.25 0.02 240);
+  --color-muted: oklch(0.25 0.02 240);
+  --color-muted-foreground: oklch(0.65 0 0);
+  --color-accent: oklch(0.3 0.02 240);
+  --color-border: oklch(0.25 0.02 240);
+  --color-input: oklch(0.25 0.02 240);
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2.5rem;
+}
+
 @layer base {
   * {
-    @apply transition-colors duration-300;
+    @apply border-border outline-none transition-all duration-300;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
   }
 }
 
-.backdrop-blur-xl {
-  backdrop-filter: blur(24px);
+/* Custom UI Utilities */
+.glass {
+  @apply backdrop-blur-xl bg-white/5 border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)];
 }
 
-.backdrop-blur-2xl {
-  backdrop-filter: blur(40px);
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-br from-blue-400 via-purple-400 to-emerald-400;
+}
+
+.glow-primary {
+  @apply shadow-[0_0_20px_rgba(59,130,246,0.5)];
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transform: skewX(-25deg);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    left: 200%;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/40 transition-colors;
+}
+
+/* Modern typography */
+h1, h2, h3, h4, h5, h6 {
+  @apply tracking-tight font-black;
+}
+
+/* Animation utilities */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }

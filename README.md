@@ -1,38 +1,37 @@
-# CloudDeck ☁️
+# CloudDeck | Stellar Horizon ☁️✨
 
-CloudDeck is a modern, secure, and fast media dashboard for Cloudinary. It allows users to manage their assets without creating a separate account, using their Cloudinary API credentials directly.
+CloudDeck is a premium, high-performance media dashboard for Cloudinary. Re-imagined with the "Stellar Horizon" design language, it combines elite glassmorphism with advanced AI insights to provide a next-generation asset management experience.
 
 ## ✨ Features
 
-- **No Login Required**: Connect instantly using your Cloudinary Cloud Name, API Key, and API Secret.
-- **Secure**: Sensitive operations are handled server-side. API secrets are never exposed to the frontend.
-- **Media Management**:
-  - Browse images, videos, and raw files.
-  - Grid and List view modes.
-  - Folder navigation with breadcrumbs.
-  - Search by filename.
-- **File Actions**:
-  - Upload via drag-and-drop with progress tracking.
-  - Rename and Delete assets.
-  - Copy secure URLs and Download files.
-- **Usage Analytics**: Real-time tracking of storage, bandwidth, and asset count.
-- **Modern UI**:
-  - Responsive design (Mobile & Desktop).
-  - Dark and Light mode support.
-  - Smooth animations with Framer Motion.
+- **Stellar Horizon UI**: A world-class Dark-Mode-First design featuring:
+  - **Glassmorphism 2.0**: Sophisticated transparency and blur effects.
+  - **Dynamic Backgrounds**: Mouse-reactive glowing starfields for an immersive experience.
+  - **Micro-Animations**: Fluid transitions powered by Framer Motion.
+- **Magic Insight (Optional AI)**: 
+  - Integrated **Google Gemini 1.5 Flash**.
+  - Automatic image/video analysis and description generation.
+  - Intelligent context-aware tagging.
+- **No Database Architecture**: Connect instantly using your Cloudinary credentials. Your data stays yours.
+- **Secure Handling**: Sensitive operations and API secrets are signed server-side.
+- **Comprehensive Media Actions**:
+  - Drag-and-drop uploads with real-time transfer progress.
+  - Instant re-designation (Rename) and asset purging (Delete).
+  - One-click CDN URL copying and external viewing.
+- **Usage Analytics**: Real-time tracking of storage, bandwidth, and asset volume.
 
 ## 🚀 Tech Stack
 
-- **Frontend**: React, Vite, Tailwind CSS, Zustand, Framer Motion, Lucide Icons.
-- **Backend**: Node.js, Express, Cloudinary SDK.
-- **Deployment**: Optimized for Cloud Run / Vercel / Railway.
+- **Frontend**: React 19, Vite, **Tailwind CSS v4**, Zustand, Framer Motion (`motion/react`), Lucide.
+- **Backend**: Node.js, Express, Cloudinary SDK, **Google Gen AI SDK v2**.
+- **Theming**: Advanced OKLCH color space with custom design tokens.
 
 ## 🛠️ Setup & Installation
 
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/rebreborn/clouddeck.git
-   cd clouddeck
+   cd CloudDeck
    ```
 
 2. **Install dependencies**:
@@ -40,22 +39,18 @@ CloudDeck is a modern, secure, and fast media dashboard for Cloudinary. It allow
    npm install
    ```
 
-3. **Run the development server**:
+3. **Configure Environment** (Optional for AI):
+   Add `GEMINI_API_KEY` to your `.env` to enable Magic Insight.
+
+4. **Run the development server**:
    ```bash
    npm run dev
    ```
 
-4. **Build for production**:
+5. **Build for production**:
    ```bash
    npm run build
    ```
-
-## 🔒 Security
-
-CloudDeck is designed with security as a priority:
-- **Client-Side Storage**: Credentials are stored in `sessionStorage`, meaning they are cleared when the browser tab is closed.
-- **Server-Side Signing**: Upload signatures and sensitive API calls are performed on the backend.
-- **No Database**: We do not store your credentials or media data on our servers.
 
 ## 📄 License
 

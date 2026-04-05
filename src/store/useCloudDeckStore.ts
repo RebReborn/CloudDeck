@@ -33,6 +33,7 @@ interface CloudDeckState {
   searchQuery: string;
   resourceType: 'image' | 'video' | 'raw';
   usage: any | null;
+  aiEnabled: boolean;
   
   setCredentials: (creds: CloudinaryCredentials | null) => void;
   setAssets: (assets: Asset[]) => void;
@@ -44,6 +45,7 @@ interface CloudDeckState {
   setSearchQuery: (query: string) => void;
   setResourceType: (type: 'image' | 'video' | 'raw') => void;
   setUsage: (usage: any) => void;
+  setAiEnabled: (enabled: boolean) => void;
   logout: () => void;
 }
 
@@ -60,7 +62,9 @@ export const useCloudDeckStore = create<CloudDeckState>()(
       searchQuery: '',
       resourceType: 'image',
       usage: null,
+      aiEnabled: false,
 
+      setAiEnabled: (aiEnabled) => set({ aiEnabled }),
       setCredentials: (credentials) => set({ credentials }),
       setAssets: (assets) => set({ assets }),
       setFolders: (folders) => set({ folders }),

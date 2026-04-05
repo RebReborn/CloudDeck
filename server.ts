@@ -2,12 +2,27 @@ import express from 'express';
 import { createServer as createViteServer } from 'vite';
 import path from 'path';
 import { v2 as cloudinary } from 'cloudinary';
+import { GoogleGenAI } from '@google/genai';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const aiEnabled = !!process.env.GEMINI_API_KEY;
+const genAI = aiEnabled ? new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }) : null;
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
 
   app.use(express.json());
+
+  // Config Endpoint
+  app.get('/api/config', (req, res) => {
+    res.json({ 
+      aiEnabled,
+      cloudName: process.env.CLOUD_NAME || '' // for optional pre-filling
+    });
+  });
 
   // Middleware to configure Cloudinary per request
   const configureCloudinary = (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -111,6 +126,49 @@ async function startServer() {
       res.json(result);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post('/api/analyze', async (req, res) => {
+    if (!aiEnabled || !genAI) {
+      return res.status(503).json({ error: 'AI analysis is currently disabled (No API key found on server).' });
+    }
+    try {
+      const { url, resource_type = 'image' } = req.body;
+      
+      const prompt = resource_type === 'image' 
+        ? "Analyze this image and provide a concise, professional description (max 2 sentences) and 5 relevant tags. Format as JSON: { \"description\": \"...\", \"tags\": [\"...\", \"...\"] }"
+        : "Analyze this video (if thumbnail provided) or file and provide a concise description and 5 tags. Format as JSON: { \"description\": \"...\", \"tags\": [\"...\", \"...\"] }";
+
+      // For simplicity in this demo, we'll fetch the image and send it to Gemini
+      // or just send the URL if using a model that supports it.
+      // Gemini 1.5 Flash can handle URLs if provided in the right format, 
+      // but here we'll use a text-based prompt with the URL for context.
+      const result = await genAI.models.generateContent({
+        model: 'gemini-1.5-flash',
+        contents: [{
+          role: 'user',
+          parts: [
+            { text: prompt },
+            {
+              fileData: {
+                mimeType: resource_type === 'image' ? 'image/jpeg' : 'video/mp4',
+                fileUri: url
+              }
+            }
+          ]
+        }]
+      });
+      
+      const response = await result;
+      const text = response.text || '';
+      
+      // Clean up JSON if Gemini adds markdown blocks
+      const jsonStr = text.replace(/```json\n?|\n?```/g, '').trim();
+      res.json(JSON.parse(jsonStr));
+    } catch (error: any) {
+      console.error('Gemini error:', error);
+      res.status(500).json({ error: 'Failed to analyze asset' });
     }
   });
 
