@@ -94,9 +94,12 @@ async function startServer() {
   app.delete('/api/assets', configureCloudinary, async (req, res) => {
     try {
       const { public_ids, resource_type = 'image' } = req.body;
+      console.log('Attempting to delete assets:', { public_ids, resource_type });
       const result = await cloudinary.api.delete_resources(public_ids, { resource_type });
+      console.log('Delete result:', result);
       res.json(result);
     } catch (error: any) {
+      console.error('Delete error:', error);
       res.status(500).json({ error: error.message });
     }
   });

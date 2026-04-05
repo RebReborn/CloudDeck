@@ -81,11 +81,13 @@ export default function Dashboard() {
     fetchAssets();
   }, [currentFolder, resourceType]);
 
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
+
   const handleDelete = async (public_id: string) => {
-    if (!confirm('Are you sure you want to delete this asset?')) return;
     try {
       await api.delete('/assets', { data: { public_ids: [public_id], resource_type: resourceType } });
       toast.success('Asset deleted');
+      setIsDeleting(null);
       fetchAssets();
     } catch (error) {
       toast.error('Failed to delete asset');
@@ -390,7 +392,7 @@ export default function Dashboard() {
                         <button onClick={() => handleRename(asset.public_id)} className="p-1 text-slate-400 hover:text-blue-600 transition-colors">
                           <Edit2 className="w-3 h-3" />
                         </button>
-                        <button onClick={() => handleDelete(asset.public_id)} className="p-1 text-slate-400 hover:text-red-600 transition-colors">
+                        <button onClick={() => setIsDeleting(asset.public_id)} className="p-1 text-slate-400 hover:text-red-600 transition-colors">
                           <Trash2 className="w-3 h-3" />
                         </button>
                       </div>
@@ -433,7 +435,7 @@ export default function Dashboard() {
                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button onClick={() => copyUrl(asset.secure_url)} className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors"><Copy className="w-4 h-4" /></button>
                           <button onClick={() => handleRename(asset.public_id)} className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors"><Edit2 className="w-4 h-4" /></button>
-                          <button onClick={() => handleDelete(asset.public_id)} className="p-1.5 text-slate-400 hover:text-red-600 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                          <button onClick={() => setIsDeleting(asset.public_id)} className="p-1.5 text-slate-400 hover:text-red-600 transition-colors"><Trash2 className="w-4 h-4" /></button>
                         </div>
                       </td>
                     </tr>
@@ -444,6 +446,49 @@ export default function Dashboard() {
           )}
         </div>
       </main>
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {isDeleting && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsDeleting(null)}
+              className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-sm bg-white dark:bg-slate-900 rounded-3xl shadow-2xl p-8 text-center"
+            >
+              <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-2xl flex items-center justify-center text-red-600 dark:text-red-400 mx-auto mb-6">
+                <Trash2 className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Delete Asset?</h3>
+              <p className="text-slate-500 dark:text-slate-400 text-sm mb-8">
+                This action cannot be undone. The file will be permanently removed from your Cloudinary account.
+              </p>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setIsDeleting(null)}
+                  className="flex-1 px-6 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold rounded-2xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={() => handleDelete(isDeleting)}
+                  className="flex-1 px-6 py-3 bg-red-600 text-white font-bold rounded-2xl hover:bg-red-700 shadow-lg shadow-red-500/25 transition-all"
+                >
+                  Delete
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Upload Modal */}
       <AnimatePresence>
